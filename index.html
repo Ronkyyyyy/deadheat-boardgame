@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEAD HEAT - 1P App</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div id="home-screen">
+        <h1>DEAD HEAT</h1>
+        <button id="home-start-btn">GAME START</button>
+        <button id="home-rules-btn">RULES</button>
+    </div>
+
+    <div id="rule-modal" class="hidden">
+        <div class="modal-content">
+            <h2>RULES</h2>
+            <div id="rule-text">
+                <p><strong>1. ゲーム概要</strong><br>
+                『DEAD HEAT』は、自分の正体を隠しながら、全員で1つの「大駒」を動かし、自分の担当する「自駒」を密かに1位に導く、正体隠匿レースゲームです。</p>
+                <p><strong>2. ゲームの目的</strong><br>
+                「大駒」がコースを3周した時点で、自分の担当する「自駒」が順位ボードの1位になっていること。</p>
+                <p><strong>3. ゲームの流れ</strong><br>
+                ゲームは「いっせーのせ」を繰り返して進行します。</p>
+                <ol>
+                    <li><strong>手札補充フェーズ:</strong> 全員、手札が3枚になるように山札からカードを引きます。</li>
+                    <li><strong>「いっせーのせ」フェーズ:</strong> 全員、手札から1枚を選び、同時に公開します。</li>
+                    <li><strong>解決フェーズ:</strong> 以下の【A】→【B】の順番で効果を解決します。</li>
+                </ol>
+                <p><strong>4. 解決フェーズの詳細</strong></p>
+                <p><strong>【A】フェーズ1：特殊効果の判定</strong><br>
+                （×2, 駒チェンジ, 担当駒シャッフル）を確認。</p>
+                <ul>
+                    <li><strong>0枚:</strong> 何もなし (移動倍率 x1)</li>
+                    <li><strong>1枚:</strong> そのカードの効果が発動。</li>
+                    <li><strong>2枚以上:</strong> すべての特殊効果が無効 (移動倍率 x1)</li>
+                </ul>
+                <p><strong>【B】フェーズ2：移動の判定</strong><br>
+                （1, 3, 4, 10枚ずつ, +2）の数字カードだけを見ます。</p>
+                <ul>
+                    <li><strong>0枚:</strong> 移動しません。</li>
+                    <li><strong>1枚以上:</strong>
+                        <ul>
+                            <li><strong>移動権利者:</strong> 「一番小さい数字」を出したプレイヤー。</li>
+                            <li><strong>移動マス数:</strong> （一番小さい数字） × （フェーズ1の倍率）</li>
+                            <li><strong>効果の対象:</strong>
+                                <ul>
+                                    <li>権利者のカードが「背景色+2」: その色の駒が強制対象。</li>
+                                    <li>権利者のカードが「1, 3, 4」: 権利者が任意の駒を1つ選ぶ。</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <p><strong>5. 最重要ルール：バッティング（数字被り）</strong><br>
+                もし、「一番小さい数字」を出したプレイヤーが2人以上いた場合：</p>
+                <ul>
+                    <li><strong>ステップ1：移動</strong> 大駒は（一番小さい数字） x （フェーズ1の倍率）だけ進みます。(v7変更点)</li>
+                    <li><strong>ステップ2：指差し</strong> バッティングした全員が、対象の駒を同時に指差します。（「+2」カードの場合、その色が強制指名されます）</li>
+                    <li><strong>ステップ3：解決</strong>
+                        <ul>
+                            <li><strong>A. 違う駒を指差した場合:</strong> 指差された駒が、現在の順位が下位の駒から順に、マスの効果を受けます。</li>
+                            <li><strong>B. 全員が同じ駒を指差した場合:</strong>
+                                <ul>
+                                    <li><strong>ペナルティ:</strong> 指差した全員が、自分の「担当駒カード」を公開します。</li>
+                                    <li><strong>対象変更:</strong> 狙われた駒は無傷です。代わりに、ペナルティで公開させられた（または既に公開していた）全員の「自駒」が、下位から順にマスの効果を受けます。</li>
+                                </ul>
+                            </li>
+                            <li><strong>※特別ルール（+2同士, v9仕様書）:</strong> バッティングした全員が「+2」カードの場合、色が被らなかった駒（例: BLUE+2が1枚）は即時効果対象となり、色が被ったプレイヤー（例: RED+2が2人）のみがステップ2（自由指差し）に進みます。</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p><strong>6. マスの効果</strong></p>
+                <ul>
+                    <li><strong>UP:</strong> 順位を上げる。</li>
+                    <li><strong>DOWN:</strong> 順位を下げる。</li>
+                    <li><strong>CRUSH:</strong> 強制的に最下位（7位）になる。</li>
+                    <li><strong>ZONE:</strong> 強制的にトップ（1位）になる。</li>
+                    <li><strong>GOAL:</strong> 3周目に通過（または停止）するとゲーム終了。(v8変更点)</li>
+                </ul>
+            </div>
+            <button id="close-rules-btn">CLOSE</button>
+        </div>
+    </div>
+
+    <div id="setup-modal" class="hidden">
+        <div class="modal-content">
+            <h2>GAME SETUP</h2>
+            <div class="setup-row">
+                <label for="player-count-select">合計プレイ人数:</label>
+                <select id="player-count-select">
+                    <option value="4">4人 (COM 3人)</option>
+                    <option value="5" selected>5人 (COM 4人)</option>
+                    <option value="6">6人 (COM 5人)</option>
+                    <option value="7">7人 (COM 6人)</option>
+                </select>
+            </div>
+            
+            <hr class="setup-divider">
+            
+            <h3>対戦相手 (COM) の性格</h3>
+            <div id="ai-selection-area">
+                </div>
+            
+            <button id="start-game-btn">GAME START</button>
+        </div>
+    </div>
+
+    <div id="end-game-modal" class="hidden">
+        <div class="modal-content">
+            <h2 id="end-game-title">GAME OVER</h2>
+            
+            <div id="end-game-result-container">
+                <div id="end-game-result"></div>
+                <div id="result-chart-container">
+                    <canvas id="result-chart"></canvas>
+                </div>
+            </div>
+            
+            <p>（ページをリロードすると再プレイできます）</p>
+        </div>
+    </div>
+
+    <div id="game-container" class="hidden">
+        
+        <header id="game-header">
+            <h1>DEAD HEAT</h1>
+            <div id="game-status">
+                <div id="lap-counter">Lap: 1 / 3</div>
+                <div id="big-koma-position">Position: 0 / 32</div>
+            </div>
+        </header>
+        
+        <main id="main-content">
+            <div id="course-area">
+                <h2>COURSE</h2>
+                <div id="course-board">
+                    </div>
+                <div id="big-koma"></div> </div>
+            
+            <div id="ranking-area">
+                <h2>RANKING</h2>
+                <ol id="ranking-board">
+                    </ol>
+            </div>
+        </main>
+        
+        <footer id="player-interface">
+            
+            <div id="player-area">
+                <div id="player-info">
+                    <h3>YOUR COLOR</h3>
+                    <div id="assigned-color-display" class="koma-display">
+                        <span class="koma">?</span>
+                    </div>
+                </div>
+                <h3>YOUR HAND</h3>
+                <div id="player-hand">
+                    </div>
+            </div>
+            
+            <div id="resolution-area">
+                <h3>REVEALED CARDS</h3>
+                <div id="reveal-area">
+                    </div>
+                <h3>TURN RESULT (Last 3)</h3>
+                <div id="turn-result-display">
+                    <p>カードを選択してください...</p>
+                </div>
+            </div>
+
+            <div id="side-panel-area">
+                <h3>OPPONENTS</h3>
+                <div id="ai-status">
+                    </div>
+                <h3>DETAIL LOG</h3>
+                <div id="game-log">
+                    <p>ゲーム開始準備中...</p>
+                </div>
+            </div>
+            
+        </footer>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html>

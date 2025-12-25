@@ -1,0 +1,531 @@
+/* style.css */
+:root {
+    /* v13 修正：赤の色味を調整 */
+    --color-red: #FF4D6D; /* 以前: #ff004c */
+    
+    --color-pink: #ff70b3;
+    --color-orange: #ff9900;
+    --color-yellow: #f0ff00;
+    --color-green: #00ff6a;
+    --color-blue: #00ccff;
+    --color-purple: #a65aff;
+    
+    --color-neon-blue: #00f7ff;
+    --color-bg-dark: #0d0d0d;
+    --color-bg-medium: #1a1a1a;
+    --color-bg-light: #2a2a1a;
+    --color-text: #f0f0f0;
+}
+
+body {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text);
+    font-family: 'Orbitron', sans-serif;
+    margin: 0;
+    padding: 10px;
+    overflow-x: hidden;
+}
+
+h1, h2, h3 {
+    color: var(--color-neon-blue);
+    text-shadow: 0 0 5px var(--color-neon-blue), 0 0 10px var(--color-neon-blue);
+    margin-top: 0;
+}
+
+/* --- ユーティリティ --- */
+.hidden {
+    display: none !important;
+}
+
+/* --- ホーム画面 (v8追加) --- */
+#home-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 95vh;
+    text-align: center;
+}
+#home-screen h1 {
+    font-size: 4.5em;
+    color: var(--color-neon-blue);
+    text-shadow: 0 0 15px var(--color-neon-blue), 0 0 25px var(--color-neon-blue);
+}
+#home-screen button {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5em;
+    margin: 15px;
+    padding: 15px 30px;
+    background-color: var(--color-bg-light);
+    color: var(--color-neon-blue);
+    border: 2px solid var(--color-neon-blue);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+#home-screen button:hover {
+    background-color: var(--color-neon-blue);
+    color: var(--color-bg-dark);
+    box-shadow: 0 0 15px var(--color-neon-blue);
+}
+
+
+/* --- メインゲームコンテナ --- */
+#game-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    border: 2px solid var(--color-neon-blue);
+    box-shadow: 0 0 15px var(--color-neon-blue);
+    background-color: var(--color-bg-medium);
+}
+
+header {
+    border-bottom: 2px solid var(--color-neon-blue);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#game-status {
+    text-align: right;
+    font-size: 1.2em;
+}
+
+#main-content {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+/* --- コースエリア --- */
+#course-area {
+    flex: 3;
+    min-width: 600px;
+    position: relative; /* 大駒の基準 */
+}
+#course-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 2px;
+    background-color: var(--color-bg-dark);
+    padding: 5px;
+    border: 1px solid var(--color-neon-blue);
+}
+.course-cell {
+    height: 60px;
+    background-color: var(--color-bg-light);
+    color: var(--color-text);
+    font-size: 0.9em;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    border: 1px solid #444;
+}
+.course-cell .cell-number {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 0.7em;
+    color: #888;
+}
+/* マスの効果ごとの色分け */
+.cell-START { background-color: var(--color-neon-blue); color: var(--color-bg-dark); }
+.cell-UP { color: var(--color-green); text-shadow: 0 0 5px var(--color-green); }
+/* v13 修正：赤の色味を調整 */
+.cell-DOWN { color: var(--color-red); text-shadow: 0 0 5px var(--color-red); }
+.cell-CRUSH { background-color: var(--color-red); color: var(--color-bg-dark); text-shadow: 0 0 5px #fff; }
+
+.cell-ZONE { background-color: var(--color-green); color: var(--color-bg-dark); text-shadow: 0 0 5px #fff; }
+/* GOALマス (v8追加) */
+.cell-GOAL {
+    background-color: #fff;
+    color: #000;
+    background-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    text-shadow: 0 0 3px #fff, 0 0 5px #fff;
+    font-size: 1.1em;
+}
+
+
+#big-koma {
+    width: 25px;
+    height: 25px;
+    background-color: var(--color-yellow);
+    border-radius: 50%;
+    border: 2px solid var(--color-bg-dark);
+    box-shadow: 0 0 10px var(--color-yellow), 0 0 15px var(--color-yellow);
+    position: absolute;
+    transition: all 0.5s ease-in-out;
+    z-index: 10;
+    /* 位置はJSで設定 */
+}
+
+/* --- 順位エリア --- */
+#ranking-area {
+    flex: 1;
+    min-width: 250px;
+    border-left: 2px solid var(--color-neon-blue);
+    padding-left: 20px;
+    margin-left: 20px;
+}
+#ranking-board {
+    list-style-type: none;
+    padding-left: 0;
+}
+#ranking-board li {
+    font-size: 1.3em;
+    margin-bottom: 8px;
+    padding: 10px;
+    background-color: var(--color-bg-light);
+    display: flex;
+    align-items: center;
+    border: 1px solid #444;
+    transition: background-color 0.3s;
+}
+/* プレイヤー選択UI */
+#ranking-board.selectable li {
+    cursor: pointer;
+    border: 1px dashed var(--color-neon-blue);
+}
+#ranking-board.selectable li:hover {
+    background-color: #3f3f3f;
+    box-shadow: 0 0 10px var(--color-neon-blue);
+}
+
+.koma { /* 駒の色のマーカー */
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 15px;
+    border: 2px solid #000;
+    box-shadow: 0 0 5px #000;
+    flex-shrink: 0;
+}
+.koma-name {
+    text-transform: uppercase;
+}
+/* 7色の定義 */
+.koma.red, .color-red { background-color: var(--color-red); }
+.koma.pink, .color-pink { background-color: var(--color-pink); }
+.koma.orange, .color-orange { background-color: var(--color-orange); }
+.koma.yellow, .color-yellow { background-color: var(--color-yellow); }
+.koma.green, .color-green { background-color: var(--color-green); }
+.koma.blue, .color-blue { background-color: var(--color-blue); }
+.koma.purple, .color-purple { background-color: var(--color-purple); }
+
+
+/* --- プレイヤーインターフェース --- */
+#player-interface {
+    display: flex;
+    flex-wrap: wrap;
+    border-top: 2px solid var(--color-neon-blue);
+    min-height: 280px;
+    background-color: #111;
+}
+
+#player-area { /* 左 */
+    flex: 2;
+    padding: 15px;
+    min-width: 350px;
+    border-right: 1px solid #444;
+}
+#player-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+#player-info h3 {
+    margin-right: 20px;
+}
+.koma-display .koma {
+    width: 30px;
+    height: 30px;
+    font-size: 1.2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-bg-dark);
+}
+
+#player-hand {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+.card {
+    width: 100px;
+    height: 150px;
+    background-color: var(--color-bg-light);
+    border: 2px solid #888;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 0 5px rgba(255,255,255,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+#player-hand .card {
+    cursor: pointer;
+}
+#player-hand .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 15px var(--color-neon-blue);
+    border-color: var(--color-neon-blue);
+}
+/* カードの種類ごとのスタイル */
+.card.type-number { color: var(--color-text); }
+.card.type-number .card-value { font-size: 2.5em; }
+
+.card.type-color { color: #000; }
+.card.type-color .card-value { font-size: 2.5em; }
+.card.type-color .card-effect {
+    font-size: 1.2em;
+    margin-top: 5px;
+}
+
+.card.type-special { border-color: var(--color-purple); }
+.card.type-special .card-effect { font-size: 1.5em; color: var(--color-purple); }
+
+
+#resolution-area { /* 中央 */
+    flex: 3;
+    padding: 15px;
+    min-width: 400px;
+}
+
+#reveal-area { /* 公開カード */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    min-height: 120px;
+    align-items: flex-start;
+}
+.revealed-card { /* 公開されたカード（小さめ） */
+    width: 80px;
+    height: 120px;
+    font-size: 0.8em;
+}
+.revealed-card .card-value { font-size: 1.8em; }
+.revealed-card .card-effect { font-size: 1.1em; }
+.revealed-card .card-owner {
+    font-size: 0.9em;
+    color: #aaa;
+    margin-top: 5px;
+}
+
+/* ★★★ ターン結果表示 (テーブルに変更) ★★★ */
+#turn-result-display {
+    margin-top: 20px;
+    padding: 0;
+    height: 150px; /* 高さを拡張 */
+    background-color: var(--color-bg-dark);
+    border: 1px solid var(--color-neon-blue);
+    box-shadow: 0 0 10px var(--color-neon-blue) inset;
+    overflow-y: auto;
+}
+#turn-result-display table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+#turn-result-display th, 
+#turn-result-display td {
+    border: 1px solid #444;
+    padding: 6px;
+    text-align: left;
+    vertical-align: top;
+}
+#turn-result-display th {
+    background-color: var(--color-bg-light);
+    color: var(--color-neon-blue);
+    position: sticky;
+    top: 0;
+}
+#turn-result-display td:nth-child(1) { width: 10%; text-align: center; } /* T */
+#turn-result-display td:nth-child(2) { width: 25%; } /* Min(Player) */
+#turn-result-display td:nth-child(3) { width: 15%; } /* Batting */
+#turn-result-display td:nth-child(4) { width: 50%; line-height: 1.5; } /* Result */
+
+/* テーブル内の色分け */
+.res-batting { color: var(--color-red); font-weight: bold; }
+.res-no-batting { color: var(--color-green); }
+.res-effect { color: var(--color-green); }
+.res-penalty { color: var(--color-red); }
+.res-phaseA { color: var(--color-purple); }
+
+
+#side-panel-area { /* 右 */
+    flex: 2;
+    padding: 15px;
+    border-left: 1px solid #444;
+    min-width: 300px;
+}
+
+#ai-status { /* AI */
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+.ai-player {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px;
+}
+.ai-player.revealed .ai-color {
+    font-weight: bold;
+    text-shadow: 0 0 5px;
+}
+
+#game-log { /* ログ */
+    height: 180px;
+    overflow-y: auto;
+    background-color: var(--color-bg-dark);
+    border: 1px solid #444;
+    padding: 10px;
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+#game-log p {
+    margin: 0 0 5px 0;
+    border-bottom: 1px dashed #333;
+}
+/* ログの強調 */
+#game-log .log-turn { color: var(--color-yellow); font-weight: bold; }
+#game-log .log-phaseA { color: var(--color-purple); }
+#game-log .log-phaseB { color: var(--color-blue); }
+#game-log .log-effect { color: var(--color-green); }
+#game-log .log-penalty { color: var(--color-red); font-weight: bold; }
+
+
+/* --- モーダル (セットアップ/終了/ルール) (v8追加) --- */
+#setup-modal, #end-game-modal, #rule-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+.modal-content {
+    background-color: var(--color-bg-medium);
+    padding: 40px;
+    border: 2px solid var(--color-neon-blue);
+    box-shadow: 0 0 20px var(--color-neon-blue);
+}
+
+/* v12 AI選択UI */
+#setup-modal .modal-content {
+    width: 80%;
+    max-width: 600px;
+}
+.setup-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+    font-size: 1.1em;
+}
+.setup-row label {
+    margin-right: 15px;
+    color: var(--color-neon-blue);
+}
+.setup-row select {
+    flex-grow: 1;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1em;
+    padding: 8px;
+    background-color: var(--color-bg-light);
+    color: var(--color-text);
+    border: 1px solid var(--color-neon-blue);
+}
+.setup-divider {
+    border: 0;
+    height: 1px;
+    background-color: #444;
+    margin: 20px 0;
+}
+
+
+/* ルールモーダル固有のスタイル */
+#rule-modal .modal-content {
+    width: 80%;
+    max-width: 800px;
+    height: 80vh;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+#rule-modal h2 {
+    text-align: center;
+    flex-shrink: 0;
+}
+#rule-text {
+    flex-grow: 1;
+    overflow-y: auto;
+    background-color: var(--color-bg-dark);
+    padding: 15px;
+    font-family: sans-serif; /* ルールは読みやすさ重視 */
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: #ddd;
+}
+#rule-text h3, #rule-text h4, #rule-text strong {
+    color: var(--color-neon-blue);
+}
+
+/* v13 終了モーダル (グラフ用) */
+#end-game-modal .modal-content {
+    width: 90%;
+    max-width: 1200px;
+}
+#end-game-result-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px;
+}
+#end-game-result {
+    flex: 1;
+    min-width: 300px;
+    text-align: left;
+    font-size: 1.1em;
+}
+#end-game-result hr {
+    border-color: #444;
+}
+#result-chart-container {
+    flex: 2;
+    min-width: 400px;
+    height: 400px; /* グラフの高さ */
+    background-color: var(--color-bg-dark);
+    padding: 10px;
+}
+
+
+/* モーダル共通のボタン */
+#setup-modal select, #setup-modal button, #end-game-modal button, #close-rules-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2em;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: var(--color-bg-light);
+    color: var(--color-neon-blue);
+    border: 1px solid var(--color-neon-blue);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+#setup-modal button:hover, #close-rules-btn:hover {
+    background-color: var(--color-neon-blue);
+    color: var(--color-bg-dark);
+}
